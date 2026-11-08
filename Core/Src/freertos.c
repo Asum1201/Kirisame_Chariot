@@ -101,13 +101,6 @@ const osThreadAttr_t INS_Task_attributes = {
   .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
-/* Definitions for MotorAssignment */
-osThreadId_t MotorAssignmentHandle;
-const osThreadAttr_t MotorAssignment_attributes = {
-  .name = "MotorAssignment",
-  .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
-};
 /* Definitions for PMTask */
 osThreadId_t PMTaskHandle;
 const osThreadAttr_t PMTask_attributes = {
@@ -148,7 +141,6 @@ void led_r(void *argument);
 void led_g(void *argument);
 void led_b(void *argument);
 void StartINSTask(void *argument);
-void StartM3508Task(void *argument);
 void StartPMTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -214,9 +206,6 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of INS_Task */
   INS_TaskHandle = osThreadNew(StartINSTask, NULL, &INS_Task_attributes);
-
-  /* creation of MotorAssignment */
-  MotorAssignmentHandle = osThreadNew(StartM3508Task, NULL, &MotorAssignment_attributes);
 
   /* creation of PMTask */
   PMTaskHandle = osThreadNew(StartPMTask, NULL, &PMTask_attributes);
@@ -355,24 +344,6 @@ __weak void StartINSTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END StartINSTask */
-}
-
-/* USER CODE BEGIN Header_StartM3508Task */
-/**
-* @brief Function implementing the MotorAssignment thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartM3508Task */
-__weak void StartM3508Task(void *argument)
-{
-  /* USER CODE BEGIN StartM3508Task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartM3508Task */
 }
 
 /* USER CODE BEGIN Header_StartPMTask */

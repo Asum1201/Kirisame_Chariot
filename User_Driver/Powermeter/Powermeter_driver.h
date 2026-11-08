@@ -19,12 +19,12 @@ class PowerMeter{
 public:
     PowerMeter(CAN_HandleTypeDef *hcan_=&hcan1,can_rx_callback *callback_=nullptr,
         uint32_t id_pm = 3);
+    static PowerMeter * instance; //Deepseek说非标准类用containerof很危险，这里选择传统c写法
     friend void pm_data_update_callback(can_device_receive *device,uint8_t *data);
 protected:
-    uint32_t id;
+    //uint32_t id;
     pm_data meter_data;
     can_device_receive can_rx;
-
 public:
     uint8_t can_rx_data[8];
 };

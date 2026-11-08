@@ -3,19 +3,25 @@
 //
 
 #include "Powermeter_driver.h"
+#include "message_center.h"
 
+
+PowerMeter * PowerMeter::instance = nullptr;
+float pm_data_buf[2];
+Publisher_t *pm_data_pub;
 float DeBug_energy,DeBug_power;
 void pm_data_update_callback(can_device_receive *can_receive,uint8_t * data);
 
 PowerMeter::PowerMeter(CAN_HandleTypeDef *hcan_,can_rx_callback *callback_,uint32_t id_pm)
-                      :can_rx_data{},can_rx(hcan_,0x31,nullptr){
+                      :meter_data{0,0,0.0f,0.0f},can_rx(hcan_,0x31,nullptr),can_rx_data{}{
+    instance=this;
+    //meter_data ={0,0,0.0f,0.0f};
     callback_ == nullptr ? can_rx.can_set_callback(pm_data_update_callback) : can_rx.can_set_callback(callback_);
-
 }
 
 void pm_data_update_callback(can_device_receive *can_receive,uint8_t * data)
 {
-    PowerMeter *pm_ptr = container_of(can_receive,PowerMeter,can_rx);
+    PowerMeter *pm_ptr = PowerMeter::instance;
     memcpy(pm_ptr->can_rx_data,data,8);
     pm_ptr->meter_data.raw_power = (int16_t)(data[1] <<8) | (data[0] & 0xFF);
     pm_ptr->meter_data.raw_energy = (int16_t)(data[3] <<8) | (data[2] & 0xFF);
@@ -23,6 +29,10 @@ void pm_data_update_callback(can_device_receive *can_receive,uint8_t * data)
     pm_ptr->meter_data.buffer_energy = float(pm_ptr->meter_data.raw_energy) * 0.1f;
     DeBug_energy = pm_ptr->meter_data.buffer_energy;
     DeBug_power = pm_ptr->meter_data.chassis_power;
+
+    pm_data_buf[0] = pm_ptr->meter_data.chassis_power;
+    pm_data_buf[1] = pm_ptr->meter_data.buffer_energy;
+    pub_sendmessage(pm_data_pub,&pm_data_buf);
 }
 
 
@@ -30,6 +40,7 @@ PowerMeter *pm_debug;
 void PowerMeter_Init(void)
 {
     pm_debug = new PowerMeter(&hcan1,pm_data_update_callback,0x31);
+    pm_data_pub = pub_register("pm_data",sizeof(pm_data_buf));
 }
 
 void StartPMTask()

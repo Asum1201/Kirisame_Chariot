@@ -108,6 +108,13 @@ const osThreadAttr_t PMTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for ProtectionTask */
+osThreadId_t ProtectionTaskHandle;
+const osThreadAttr_t ProtectionTask_attributes = {
+  .name = "ProtectionTask",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
 /* Definitions for can1_send_fifo */
 osMessageQueueId_t can1_send_fifoHandle;
 const osMessageQueueAttr_t can1_send_fifo_attributes = {
@@ -142,6 +149,7 @@ void led_g(void *argument);
 void led_b(void *argument);
 void StartINSTask(void *argument);
 void StartPMTask(void *argument);
+void StartProTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -209,6 +217,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of PMTask */
   PMTaskHandle = osThreadNew(StartPMTask, NULL, &PMTask_attributes);
+
+  /* creation of ProtectionTask */
+  ProtectionTaskHandle = osThreadNew(StartProTask, NULL, &ProtectionTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -362,6 +373,24 @@ __weak void StartPMTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END StartPMTask */
+}
+
+/* USER CODE BEGIN Header_StartProTask */
+/**
+* @brief Function implementing the ProtectionTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartProTask */
+__weak void StartProTask(void *argument)
+{
+  /* USER CODE BEGIN StartProTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartProTask */
 }
 
 /* Private application code --------------------------------------------------*/

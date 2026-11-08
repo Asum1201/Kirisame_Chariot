@@ -4,7 +4,6 @@
 
 #ifndef DX_ASSIGNMENT5_FREERTOS_POWERMETER_DRIVER_H
 #define DX_ASSIGNMENT5_FREERTOS_POWERMETER_DRIVER_H
-#include <sys/types.h>
 
 #include "CAN_bsp.h"
 struct pm_data

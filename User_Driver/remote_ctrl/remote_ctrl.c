@@ -38,7 +38,7 @@ uint32_t rc_cb_count;
 void remote_ctrl_recvcallback(void)
 {
     memcpy(dbg_recv_buff, RCInstance->recv_buff, 18);
-    rc_cb_count++;
+    //rc_cb_count++;
     //对遥控器DBUS_buffer数据进行移位解析
     RC_Ctl.rc.ch0 = (RCInstance->recv_buff[0]| (RCInstance->recv_buff[1] << 8)) & 0x07ff;           //!< Channel 0
     RC_Ctl.rc.ch1 = ((RCInstance->recv_buff[1] >> 3) | (RCInstance->recv_buff[2] << 5)) & 0x07ff;   //!< Channel 1

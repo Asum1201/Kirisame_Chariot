@@ -59,7 +59,7 @@ Subscriber_t *sub_register(char *topic_name,uint8_t data_len)
     return ret;
 }
 
-Publisher_t *pub_register(char *topic_name,uint8_t data_len)
+Publisher_t *pub_register(const char *topic_name,uint8_t data_len)
 {
     Publisher_t *node = &m_center;
     while (node ->next_topic_node != NULL)

@@ -2,8 +2,8 @@
 // Created by 33269 on 2026/10/11.
 //
 
-#ifndef _MESSAGE_CENTER_H
-#define _MESSAGE_CENTER_H
+#ifndef MESSAGE_CENTER_H
+#define MESSAGE_CENTER_H
 
 #include <stdint.h>
 
@@ -32,6 +32,11 @@ typedef struct topicnode
     uint8_t pub_registered_flag;// 用于标记该发布者是否已经注册
 }Publisher_t;
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /**
  * @brief 注册一个订阅者订阅一个话题
  * @param topic_name 指针指向话题的字符串
@@ -51,7 +56,7 @@ Subscriber_t *sub_register(char *topic_name,uint8_t data_len);
  * @note 对于相同话题，其消息长度必须相同
  * @return 一个发布者的指针
  */
-Publisher_t *pub_register(char *topic_name,uint8_t data_len);
+Publisher_t *pub_register(const char *topic_name,uint8_t data_len);
 
 /**
  * @brief 订阅者获取订阅的数据
@@ -67,4 +72,7 @@ uint8_t sub_getmessage(Subscriber_t *sub,void * data_ptr);
  * @param data_ptr 存放发布数据位置 的指针
  */
 void pub_sendmessage(Publisher_t *pub,void *data_ptr);
+#ifdef __cplusplus
+}
+#endif
 #endif //_MESSAGE_CENTER_H

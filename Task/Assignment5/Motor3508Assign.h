@@ -1,0 +1,14 @@
+//
+// Created by 33269 on 2026/11/6.
+//
+
+#ifndef DX_ASSIGNMENT5_FREERTOS_MOTOR3508ASSIGN_H
+#define DX_ASSIGNMENT5_FREERTOS_MOTOR3508ASSIGN_H
+#ifdef __cplusplus
+extern "C"
+{
+void StartM3508Task(void);
+}
+#endif
+
+#endif //DX_ASSIGNMENT5_FREERTOS_MOTOR3508ASSIGN_H

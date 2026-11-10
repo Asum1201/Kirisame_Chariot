@@ -74,6 +74,7 @@ public:
     /***--------------------------指令------------------------------***/
     bool motor_reset() override;                             //复位
     void motor_control(uint32_t cmd) override;
+    int16_t motor_get_current() override;
 
     void motor_change_speed_source(float *speed);
 

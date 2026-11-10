@@ -135,7 +135,10 @@ void DJI_motor::dji_motor_can_tx_write() {
     taskEXIT_CRITICAL();
 }
 
-
+int16_t DJI_motor::motor_get_current()
+{
+    return motor_data.given_current;
+}
 /**
  * 获取电机速度
  * @param void

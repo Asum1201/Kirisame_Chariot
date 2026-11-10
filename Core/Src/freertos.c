@@ -122,6 +122,13 @@ const osThreadAttr_t ShootTask_attributes = {
   .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
+/* Definitions for PTZ */
+osThreadId_t PTZHandle;
+const osThreadAttr_t PTZ_attributes = {
+  .name = "PTZ",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for can1_send_fifo */
 osMessageQueueId_t can1_send_fifoHandle;
 const osMessageQueueAttr_t can1_send_fifo_attributes = {
@@ -158,6 +165,7 @@ void StartINSTask(void *argument);
 void StartPMTask(void *argument);
 void StartProTask(void *argument);
 void StartShootTask(void *argument);
+void pitch_yaw_task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -231,6 +239,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of ShootTask */
   ShootTaskHandle = osThreadNew(StartShootTask, NULL, &ShootTask_attributes);
+
+  /* creation of PTZ */
+  PTZHandle = osThreadNew(pitch_yaw_task, NULL, &PTZ_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -420,6 +431,24 @@ __weak void StartShootTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END StartShootTask */
+}
+
+/* USER CODE BEGIN Header_pitch_yaw_task */
+/**
+* @brief Function implementing the PTZ thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_pitch_yaw_task */
+__weak void pitch_yaw_task(void *argument)
+{
+  /* USER CODE BEGIN pitch_yaw_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END pitch_yaw_task */
 }
 
 /* Private application code --------------------------------------------------*/

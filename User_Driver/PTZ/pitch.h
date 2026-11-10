@@ -22,6 +22,9 @@ extern float yaw_target_position;
 extern volatile float pitch_actual_position;
 extern volatile float pitch_actual_current;
 
+
+extern volatile float pitch_cmd;
+
 float pitch_add_value_calculate();
 float yaw_add_value_calculate();
 

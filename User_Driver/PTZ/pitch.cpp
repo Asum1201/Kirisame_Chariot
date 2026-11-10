@@ -4,24 +4,27 @@
 #include "Protection.h"
 float pitch_full_value = 0.5f;
 
-volatile float pitch_position_kp = 0.4f;
+volatile float pitch_position_kp = 0.0f;
 volatile float pitch_position_ki = 0.0f;
 volatile float pitch_position_kd = 0.0f;
 volatile float pitch_position_max_output = 0.15f;
 volatile float pitch_position_integral_limit = 0.1f;
 
-volatile float pitch_velocity_kp = 2.0f;
+volatile float pitch_velocity_kp = 0.0f;
 volatile float pitch_velocity_ki = 0.0f;
 volatile float pitch_velocity_kd = 0.0f;
 volatile float pitch_velocity_max_output = 0.25f;
 volatile float pitch_velocity_integral_limit = 0.1f;
 
-volatile float pitch_feed = 0.05f;
+volatile float pitch_feed = 0.0f;
 volatile float pitch_target_position = 0;
 volatile float pitch_actual_position = 0.0f;
 volatile float pitch_actual_current = 0.0f;
 
 float yaw_full_value = 2.0f;
+
+
+volatile float pitch_cmd = 0.0f;
 
 float pitch_add_value_calculate()
 {
@@ -49,7 +52,7 @@ float yaw_add_value_calculate()
 
 void pitch_yaw_task(void *argument)
 {
-    DJI_motor *motor_GM6020_pitch = new DJI_motor(&hcan1, nullptr, 1, DJI_GM6020, 0);
+     DJI_motor *motor_GM6020_pitch = new DJI_motor(&hcan1, nullptr, 1, DJI_GM6020, 0);
 
     for (;;)
     {
@@ -59,10 +62,9 @@ void pitch_yaw_task(void *argument)
             (rc_last_rx_tick != 0U) &&
             ((now_tick - rc_last_rx_tick) <= 21U); */
 
-        if ((protection_state == NEED_PROTECTION) /* || (!rc_valid) */)
+         if ((protection_state == NEED_PROTECTION) /* || (!rc_valid) */)
         {
-            pitch_target_position =
-                motor_GM6020_pitch->motor_get_rounds();
+            pitch_target_position = motor_GM6020_pitch->motor_get_rounds();
 
             motor_GM6020_pitch->motor_control(DJI_MOTOR_CLEAR_PID);
             motor_GM6020_pitch->motor_set_current(0.0f);
@@ -87,14 +89,14 @@ void pitch_yaw_task(void *argument)
 
             //pitch_target_position += pitch_add_value_calculate();
 
-            if (pitch_target_position < 0.0f)
+            /* if (pitch_target_position < 0.0f)
             {
                 pitch_target_position = 0.0f;
             }
             else if (pitch_target_position > 0.3f)
             {
                 pitch_target_position = 0.3f;
-            }
+            }*/
 
             motor_GM6020_pitch->motor_set_rounds(
                 pitch_target_position
@@ -126,6 +128,7 @@ void pitch_yaw_task(void *argument)
             }
 
             motor_GM6020_pitch->motor_set_current(voltage_cmd);
+                    pitch_cmd = voltage_cmd;
         }
 
         osDelay(1);

@@ -17,6 +17,8 @@ typedef enum
 }rc_state_e;//对遥控器状态的定义
 uint32_t protection_now;
 
+volatile protection_state_e protection_state = STATE_SAFE; //保护状态，唯一的定义在这里
+
 rc_state_e rc_state;
 Publisher_t *RC_State_pub;
 /**

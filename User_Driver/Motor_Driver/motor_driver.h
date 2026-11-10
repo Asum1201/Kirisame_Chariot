@@ -12,6 +12,7 @@ class motor_dev {
 protected:
     virtual float motor_get_speed_forward();  //返回电机转子速度 rpm 际实际值 不做归一化
     virtual float motor_get_rounds_forward(); //返回电机转子圈数 实际值 不做归一化
+    virtual int16_t motor_get_current();
 
     virtual void motor_set_current_forward(float current);  //范围 -1～1
     virtual void motor_set_speed_forward(float speed);      //范围 -1～1

@@ -115,6 +115,13 @@ const osThreadAttr_t ProtectionTask_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
+/* Definitions for ShootTask */
+osThreadId_t ShootTaskHandle;
+const osThreadAttr_t ShootTask_attributes = {
+  .name = "ShootTask",
+  .stack_size = 1024 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
 /* Definitions for can1_send_fifo */
 osMessageQueueId_t can1_send_fifoHandle;
 const osMessageQueueAttr_t can1_send_fifo_attributes = {
@@ -150,6 +157,7 @@ void led_b(void *argument);
 void StartINSTask(void *argument);
 void StartPMTask(void *argument);
 void StartProTask(void *argument);
+void StartShootTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -220,6 +228,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of ProtectionTask */
   ProtectionTaskHandle = osThreadNew(StartProTask, NULL, &ProtectionTask_attributes);
+
+  /* creation of ShootTask */
+  ShootTaskHandle = osThreadNew(StartShootTask, NULL, &ShootTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -391,6 +402,24 @@ __weak void StartProTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END StartProTask */
+}
+
+/* USER CODE BEGIN Header_StartShootTask */
+/**
+* @brief Function implementing the ShootTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartShootTask */
+__weak void StartShootTask(void *argument)
+{
+  /* USER CODE BEGIN StartShootTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartShootTask */
 }
 
 /* Private application code --------------------------------------------------*/

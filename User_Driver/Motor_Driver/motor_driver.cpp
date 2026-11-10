@@ -46,6 +46,11 @@ float motor_dev::motor_get_speed() {
 
 
 /**--------------------------以下虚函数没有定义会报错-----------------------------**/
+int16_t motor_dev::motor_get_current()
+{
+    return(0);
+}
+
 float motor_dev::motor_get_speed_forward(){
     return(0);
 }

@@ -1,8 +1,0 @@
-//
-// Created by 34818 on 2026/11/9.
-//
-
-#ifndef KIRISAME_CHARIOT_YAW_H
-#define KIRISAME_CHARIOT_YAW_H
-
-#endif //KIRISAME_CHARIOT_YAW_H

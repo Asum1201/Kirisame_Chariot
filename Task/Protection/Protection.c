@@ -70,9 +70,9 @@ void StartProTask(void)
         {
             set_rc_state();
         }
-       // if (rc_state == SAFE || INS.zn[2] < 0.342f)
-         //    protection_state = NEED_PROTECTION;
-        //else protection_state = STATE_SAFE;
+        if (rc_state == SAFE || INS.zn[2] < 0.342f)
+             protection_state = NEED_PROTECTION;
+        else protection_state = STATE_SAFE;
 
         osDelay(1);
     }

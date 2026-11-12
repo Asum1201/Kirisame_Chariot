@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-#include "bsp_usart.h"
+#include "usart.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -19,41 +19,76 @@ volatile uint32_t rc_last_rx_tick;
 // volatile unsigned char sbus_rx_buffer[25];
 // static
 RC_Ctl_t RC_Ctl;
-static USART_Init_config_s RC_Init_Config;
-static USARTInstance * RCInstance;
 /* ----------------------- Function Implements  ---------------------------- */
 
-void remote_ctrl_init(void)
-{
-      //RC参数的配置
-       RC_Init_Config .usart_handle = &huart3;
-       RC_Init_Config .recv_buff_size = 18; //18 为DBUS一帧数据大小
-       RC_Init_Config .module_callback = remote_ctrl_recvcallback;
+extern UART_HandleTypeDef huart3;
+/* Larger than one frame: IDLE defines the packet boundary, including malformed
+ * packets. Normal DMA restarts at each gap and recovers byte alignment. */
+uint8_t dbus_rx_buffer[36];
+static volatile uint8_t restart_required;
 
-       RCInstance  = usart_register(&RC_Init_Config); //注册一个USART实例
+void BSP_DBUS_Start_Receive(void)
+{
+    HAL_StatusTypeDef result=HAL_UARTEx_ReceiveToIdle_DMA(
+        &huart3,dbus_rx_buffer,sizeof(dbus_rx_buffer));
+    restart_required=(uint8_t)(result!=HAL_OK);
+    if (result==HAL_OK) __HAL_DMA_DISABLE_IT(huart3.hdmarx,DMA_IT_HT);
 }
+void BSP_DBUS_Init(void)
+{
+    restart_required=1;
+    BSP_DBUS_Start_Receive();
+}
+
 uint8_t dbg_recv_buff[18];
 uint32_t rc_cb_count;
 
 void remote_ctrl_recvcallback(void)
 {
-    memcpy(dbg_recv_buff, RCInstance->recv_buff, 18);
     //rc_cb_count++;
     //对遥控器DBUS_buffer数据进行移位解析
-    RC_Ctl.rc.ch0 = (RCInstance->recv_buff[0]| (RCInstance->recv_buff[1] << 8)) & 0x07ff;           //!< Channel 0
-    RC_Ctl.rc.ch1 = ((RCInstance->recv_buff[1] >> 3) | (RCInstance->recv_buff[2] << 5)) & 0x07ff;   //!< Channel 1
-    RC_Ctl.rc.ch2 = ((RCInstance->recv_buff[2] >> 6) | (RCInstance->recv_buff[3] << 2) |            //!< Channel 2
-                     (RCInstance->recv_buff[4] << 10)) & 0x07ff;
-    RC_Ctl.rc.ch3 = ((RCInstance->recv_buff[4] >> 1) | (RCInstance->recv_buff[5] << 7)) & 0x07ff;   //!< Channel 3
-    RC_Ctl.rc.s1  = ((RCInstance->recv_buff[5] >> 4)& 0x000C) >> 2;                          //!< Switch left
-    RC_Ctl.rc.s2  = ((RCInstance->recv_buff[5] >> 4)& 0x0003);                               //!< Switch right
+    const uint8_t *d=dbus_rx_buffer;
+    RC_Ctl.rc.ch0 = (d[0]| (d[1] << 8)) & 0x07ff;           //!< Channel 0
+    RC_Ctl.rc.ch1 = ((d[1] >> 3) | (d[2] << 5)) & 0x07ff;   //!< Channel 1
+    RC_Ctl.rc.ch2 = ((d[2] >> 6) | (d[3] << 2) |            //!< Channel 2
+                     (d[4] << 10)) & 0x07ff;
+    RC_Ctl.rc.ch3 = ((d[4] >> 1) | (d[5] << 7)) & 0x07ff;   //!< Channel 3
+    RC_Ctl.rc.s1  = ((d[5] >> 4)& 0x000C) >> 2;                          //!< Switch left
+    RC_Ctl.rc.s2  = ((d[5] >> 4)& 0x0003);                               //!< Switch right
 
-    RC_Ctl.mouse.x = (int16_t) ( RCInstance->recv_buff[6] | (RCInstance->recv_buff[7] << 8) );
-    RC_Ctl.mouse.y =(int16_t)  ( RCInstance->recv_buff[8] | (RCInstance->recv_buff[9] << 8) );
-    RC_Ctl.mouse.z = (int16_t) ( RCInstance->recv_buff[10] | (RCInstance->recv_buff[11] << 8) );
-    RC_Ctl.mouse.press_l = RCInstance->recv_buff[12];
-    RC_Ctl.mouse.press_r = RCInstance->recv_buff[13];
-    RC_Ctl.key.v = RCInstance->recv_buff[14] | (RCInstance->recv_buff[15] << 8);
+    RC_Ctl.mouse.x = (int16_t) ( d[6] | (d[7] << 8) );
+    RC_Ctl.mouse.y =(int16_t)  ( d[8] | (d[9] << 8) );
+    RC_Ctl.mouse.z = (int16_t) ( d[10] | (d[11] << 8) );
+    RC_Ctl.mouse.press_l = d[12];
+    RC_Ctl.mouse.press_r = d[13];
+    RC_Ctl.key.v = d[14] | (d[15] << 8);
     rc_cb_count = (rc_cb_count+1) % 10000;
     rc_last_rx_tick = xTaskGetTickCountFromISR();
+}
+
+static uint8_t valid_frame(void)
+{
+    const uint8_t *d=dbus_rx_buffer;
+    uint16_t c0=(uint16_t)((d[0]|(d[1]<<8))&0x7ff);
+    uint16_t c1=(uint16_t)(((d[1]>>3)|(d[2]<<5))&0x7ff);
+    uint16_t c2=(uint16_t)(((d[2]>>6)|(d[3]<<2)|(d[4]<<10))&0x7ff);
+    uint16_t c3=(uint16_t)(((d[4]>>1)|(d[5]<<7))&0x7ff);
+    uint8_t s1=(d[5]>>4)&3U, s2=(d[5]>>6)&3U;
+    return (uint8_t)(c0>=364U && c0<=1684U && c1>=364U && c1<=1684U &&
+        c2>=364U && c2<=1684U && c3>=364U && c3<=1684U && s1 && s2);
+}
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size)
+{
+    if (huart->Instance!=USART3) return;
+    if (size==18U && valid_frame()) {
+        remote_ctrl_recvcallback();
+    }
+    BSP_DBUS_Start_Receive(); /* Re-arm even after truncated or invalid data. */
+}
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance!=USART3) return;
+    (void)HAL_UART_AbortReceive(huart);
+    BSP_DBUS_Start_Receive();
 }

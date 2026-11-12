@@ -123,4 +123,11 @@ void remote_ctrl_init(void);
  * @在DMA空闲中断时调用，进行DBUS的数据拼接解析，并且作为Publisher发布该数据
  */
 void remote_ctrl_recvcallback();
+
+void BSP_DBUS_Init(void);
+
+void BSP_DBUS_Start_Receive(void);
+
+void BSP_DBUS_Service(void);
+
 #endif //REMOTE_CTRL_H

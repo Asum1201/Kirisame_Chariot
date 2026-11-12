@@ -113,8 +113,7 @@ int main(void)
   uint32_t init_delay = HAL_GetTick();
   while (HAL_GetTick() - init_delay <500)
     ;
-  /* USER CODE BEGIN 2 */
-    remote_ctrl_init();
+  BSP_DBUS_Init();
   /* USER CODE END 2 */
 
   /* Init scheduler */

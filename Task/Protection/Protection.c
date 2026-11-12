@@ -25,7 +25,7 @@ Publisher_t *RC_State_pub;
  */
 void set_rc_state()
 {
-    if (protection_now - rc_last_rx_tick >21) //和遥控器断连
+    if (protection_now - rc_last_rx_tick >42) //和遥控器断连
     {
         switch (rc_state)
         {

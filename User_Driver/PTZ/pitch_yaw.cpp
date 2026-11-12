@@ -53,7 +53,8 @@ float pitch_add_value_calculate()
     }
     ch1 = rc_value;
 
-    return rc_value * pitch_full_spd_value * 0.001f;
+
+    return -rc_value * pitch_full_spd_value * 0.001f;
 }
 
 float yaw_add_value_calculate()
@@ -158,8 +159,8 @@ void pitch_yaw_task(void *argument)
             if (yaw_voltage_cmd > yaw_velocity_max_output){yaw_voltage_cmd = yaw_velocity_max_output;}
             else if (yaw_voltage_cmd < -yaw_velocity_max_output){yaw_voltage_cmd = -yaw_velocity_max_output;}
 
-            motor_GM6020_pitch->motor_set_current(0);
-            motor_GM6020_yaw->motor_set_current(0);
+            motor_GM6020_pitch->motor_set_current(pitch_voltage_cmd);
+            motor_GM6020_yaw->motor_set_current(yaw_voltage_cmd);
             pitch_cmd = pitch_voltage_cmd;
             yaw_cmd = yaw_voltage_cmd;
         }

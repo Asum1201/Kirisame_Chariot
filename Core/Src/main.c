@@ -106,11 +106,14 @@ int main(void)
   MX_TIM10_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  /* USER CODE BEGIN 2 */
   DWT_Init(168);
   while (BMI088_init(&hspi1, 1) != BMI088_NO_ERROR)
     ;
     bsp_can_init();
+  uint32_t init_delay = HAL_GetTick();
+  while (HAL_GetTick() - init_delay <500)
+    ;
+  /* USER CODE BEGIN 2 */
     remote_ctrl_init();
   /* USER CODE END 2 */
 

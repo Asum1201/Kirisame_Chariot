@@ -40,6 +40,10 @@ extern volatile float pitch_cmd;
 extern volatile float yaw_actual_position;
 extern volatile float yaw_cmd;
 
+extern volatile float  valid;
+extern volatile float  ch1;
+extern volatile float  ch0;
+
 float pitch_add_value_calculate();
 float yaw_add_value_calculate();
 float target_limit(float raw_target_value);

@@ -3,7 +3,7 @@
 #include "remote_ctrl.h"
 #include "Protection.h"
 float pitch_full_spd_value = 0.3f;
-float yaw_full_spd_value = 1.0f;
+float yaw_full_spd_value = 0.6f;
 
 volatile float pitch_position_kp = 30.0f;
 volatile float pitch_position_ki = 0.0f;
@@ -20,10 +20,10 @@ volatile float pitch_target_position = 0;
 volatile float pitch_position_low = -0.78f;
 volatile float pitch_position_high = -0.62f;
 
-volatile float yaw_position_kp = 30.0f;
+volatile float yaw_position_kp = 40.0f;
 volatile float yaw_position_ki = 0.0f;
-volatile float yaw_position_kd = 0.0f;
-volatile float yaw_position_max_output = 0.8f;
+volatile float yaw_position_kd = 20.0f;
+volatile float yaw_position_max_output = 1.5f;
 volatile float yaw_position_integral_limit = 0.1f;
 volatile float yaw_velocity_kp = 0.5f;
 volatile float yaw_velocity_ki = 0.0f;

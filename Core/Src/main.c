@@ -110,8 +110,8 @@ int main(void)
   while (BMI088_init(&hspi1, 1) != BMI088_NO_ERROR)
     ;
     bsp_can_init();
-  uint32_t init_delay = HAL_GetTick();
-  while (HAL_GetTick() - init_delay <500)
+  //uint32_t init_delay = HAL_GetTick();
+  //while (HAL_GetTick() - init_delay <500)
     ;
   BSP_DBUS_Init();
   /* USER CODE END 2 */

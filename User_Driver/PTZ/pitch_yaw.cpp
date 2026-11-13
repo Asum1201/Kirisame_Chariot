@@ -45,26 +45,35 @@ volatile float  ch0 = 0.0f;
 
 float pitch_add_value_calculate()
 {
+
+    if (RC_Ctl.rc.ch1 < RC_CH_VALUE_MIN || RC_Ctl.rc.ch0 > RC_CH_VALUE_MAX)
+    {
+        return 0.0f;
+    }
     float rc_value = 2.0f * ((float)RC_Ctl.rc.ch1 - (float)RC_CH_VALUE_OFFSET) / ((float)RC_CH_VALUE_MAX - (float)RC_CH_VALUE_MIN);
 
     if (rc_value <= 0.05f && rc_value >= -0.05f)
     {
         return 0.0f;
     }
+
     ch1 = rc_value;
-
-
     return -rc_value * pitch_full_spd_value * 0.001f;
 }
 
 float yaw_add_value_calculate()
 {
+    if (RC_Ctl.rc.ch0 < RC_CH_VALUE_MIN || RC_Ctl.rc.ch0 > RC_CH_VALUE_MAX)
+    {
+        return 0.0f;
+    }
     float rc_value = 2.0f * ((float)RC_Ctl.rc.ch0 - (float)RC_CH_VALUE_OFFSET) / ((float)RC_CH_VALUE_MAX - (float)RC_CH_VALUE_MIN);
 
     if (rc_value <= 0.05f && rc_value >= -0.05f)
     {
         return 0.0f;
     }
+
     ch0 = rc_value;
 
     return -rc_value * yaw_full_spd_value * 0.001f;
@@ -145,7 +154,9 @@ void pitch_yaw_task(void *argument)
             if (pitch_raw_target < pitch_position_low) { pitch_raw_target = pitch_position_low; }
             if (pitch_raw_target > pitch_position_high) {pitch_raw_target = pitch_position_high; }
             pitch_target_position = pitch_raw_target;
-            yaw_target_position += yaw_add_value_calculate();
+            float yaw_raw_target = yaw_target_position;
+            yaw_raw_target += yaw_add_value_calculate();
+            yaw_target_position = yaw_raw_target;
 
             motor_GM6020_pitch->motor_set_rounds(pitch_target_position);
             motor_GM6020_yaw->motor_set_rounds(yaw_target_position);

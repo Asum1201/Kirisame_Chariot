@@ -9,7 +9,7 @@
 #include "remote_ctrl.h"
 #include "ins_task.h"
 
-protection_state_e protection_state=STATE_SAFE;
+protection_state_e protection_state=NEED_PROTECTION;
 typedef enum
 {
     IDLE = 0,
@@ -70,7 +70,7 @@ void StartProTask(void)
         {
             set_rc_state();
         }
-        if (rc_state == SAFE || INS.zn[2] < 0.342f)
+        if (rc_state == SAFE || INS.zn[2] < 0.342f ||rc_state == IDLE)
              protection_state = NEED_PROTECTION;
         else protection_state = STATE_SAFE;
 

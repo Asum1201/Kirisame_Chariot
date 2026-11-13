@@ -127,7 +127,7 @@ osThreadId_t PTZHandle;
 const osThreadAttr_t PTZ_attributes = {
   .name = "PTZ",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for can1_send_fifo */
 osMessageQueueId_t can1_send_fifoHandle;

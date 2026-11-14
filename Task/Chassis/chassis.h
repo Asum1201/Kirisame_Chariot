@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-// void StartChassisTask(void *argument);
+void StartChassisTask(void *argument);
 
 #ifdef __cplusplus
 }

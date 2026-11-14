@@ -50,9 +50,9 @@ DJI_motor::DJI_motor(CAN_HandleTypeDef *hcan_, can_rx_callback *callback_,
     callback_ == nullptr ? can_rx.can_set_callback(dji_motor_data_update_callback) : can_rx.can_set_callback(callback_);
 
 
-    while (init_offset_f!=1){
-        osDelay(1);//在这里停止
-    }
+    // while (init_offset_f!=1){
+    //     osDelay(1);//在这里停止
+    // }
 
     dji_motor_can_tx_t *tx;
     if(hcan_==&hcan1){

@@ -129,6 +129,13 @@ const osThreadAttr_t PTZ_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
+/* Definitions for ChassisTask */
+osThreadId_t ChassisTaskHandle;
+const osThreadAttr_t ChassisTask_attributes = {
+  .name = "ChassisTask",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
 /* Definitions for can1_send_fifo */
 osMessageQueueId_t can1_send_fifoHandle;
 const osMessageQueueAttr_t can1_send_fifo_attributes = {
@@ -166,6 +173,7 @@ void StartPMTask(void *argument);
 void StartProTask(void *argument);
 void StartShootTask(void *argument);
 void pitch_yaw_task(void *argument);
+void StartChassisTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -242,6 +250,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of PTZ */
   PTZHandle = osThreadNew(pitch_yaw_task, NULL, &PTZ_attributes);
+
+  /* creation of ChassisTask */
+  ChassisTaskHandle = osThreadNew(StartChassisTask, NULL, &ChassisTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -449,6 +460,24 @@ __weak void pitch_yaw_task(void *argument)
     osDelay(1);
   }
   /* USER CODE END pitch_yaw_task */
+}
+
+/* USER CODE BEGIN Header_StartChassisTask */
+/**
+* @brief Function implementing the ChassisTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartChassisTask */
+__weak void StartChassisTask(void *argument)
+{
+  /* USER CODE BEGIN StartChassisTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartChassisTask */
 }
 
 /* Private application code --------------------------------------------------*/

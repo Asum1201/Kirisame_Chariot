@@ -31,9 +31,9 @@ float motor_rounds= 0.0f;
 /*--------------------Friction Definition --------------------------*/
 DJI_motor *Plucking_Motor,*Friction_Motor_L,*Friction_Motor_R;
 const float FWHEEL_D = 0.06f; //摩擦轮径
-const float FMOTOR_SPEED_FORWARD_FAST = 24.0f /(1.0f / 2.0f * FWHEEL_D * MOTOR_3508_MAX_SPEED *2.0f *PI/ 60.0f),
-            FMOTOR_SPEED_FORWARD_MEDIUM = 16.0f /(1.0f / 2.0f * FWHEEL_D * MOTOR_3508_MAX_SPEED *2.0f *PI/ 60.0f),
-            FMOTOR_SPEED_FORWARD_SLOW = 8.0f /(1.0f / 2.0f * FWHEEL_D * MOTOR_3508_MAX_SPEED *2.0f *PI/ 60.0f);
+const float FMOTOR_SPEED_FORWARD_FAST = 22.0f /(1.0f / 2.0f * FWHEEL_D * MOTOR_3508_MAX_SPEED *2.0f *PI/ 60.0f),
+            FMOTOR_SPEED_FORWARD_MEDIUM = 18.0f /(1.0f / 2.0f * FWHEEL_D * MOTOR_3508_MAX_SPEED *2.0f *PI/ 60.0f),
+            FMOTOR_SPEED_FORWARD_SLOW = 14.0f /(1.0f / 2.0f * FWHEEL_D * MOTOR_3508_MAX_SPEED *2.0f *PI/ 60.0f);
 uint32_t cpunt;
 //----------
 void Friction_Pulley_Task()
